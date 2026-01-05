@@ -224,6 +224,55 @@ export default function UserManagementTable({ onAddUser }: UserManagementTablePr
     }
   };
 
+  const handleExportCSV = () => {
+    if (!filteredUsers || filteredUsers.length === 0) {
+      toast({
+        title: "Error",
+        description: "No users to export",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // CSV headers
+    const headers = ["Full Name", "Email", "Username", "Role", "Status", "Department", "Joined Date"];
+    
+    // CSV rows
+    const rows = filteredUsers.map(user => [
+      user.name,
+      user.email || "—",
+      user.uniqueId,
+      getRoleLabel(user.role),
+      user.status === "active" ? "Active" : "Inactive",
+      getDepartmentName(user.departmentId),
+      new Date(user.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+    ]);
+
+    // Combine headers and rows
+    const csvContent = [
+      headers.join(","),
+      ...rows.map(row => row.map(cell => `"${cell}"`).join(","))
+    ].join("\n");
+
+    // Create blob and download
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    
+    link.setAttribute("href", url);
+    link.setAttribute("download", `users_export_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = "hidden";
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    toast({
+      title: "Success",
+      description: `Exported ${filteredUsers.length} users to CSV`,
+    });
+  };
+
   return (
     <div className="p-8 pt-24 space-y-6 bg-gray-50 min-h-screen">
       {/* Header Section */}
@@ -248,6 +297,7 @@ export default function UserManagementTable({ onAddUser }: UserManagementTablePr
           <Button
             variant="outline"
             className="border-gray-300 hover:bg-gray-50"
+            onClick={handleExportCSV}
           >
             <Download className="w-4 h-4 mr-2" />
             Export

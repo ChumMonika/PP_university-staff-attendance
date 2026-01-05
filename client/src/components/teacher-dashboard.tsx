@@ -277,7 +277,8 @@ export default function TeacherDashboard({ user }: TeacherDashboardProps) {
                 <GraduationCap className="w-6 h-6 text-blue-600" />
               </div>
               <div>
-                <h1 className="text-xl font-semibold text-gray-900">Teacher Dashboard</h1>
+                {/* show role */}
+                <h1 className="text-xl font-semibold text-gray-900">{user.role.charAt(0).toUpperCase() + user.role.slice(1)} Dashboard</h1>
                 <p className="text-sm text-gray-500">Welcome back, {user.name}</p>
               </div>
             </div>
