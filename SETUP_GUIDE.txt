@@ -1,0 +1,141 @@
+QUICK SETUP GUIDE
+==================
+
+UNIVERSITY STAFF ATTENDANCE TRACKER
+Simple step-by-step instructions for teachers
+
+═══════════════════════════════════════════════════════════
+
+1. INSTALL REQUIREMENTS
+   ─────────────────────
+   You need these installed on your computer:
+   
+   ✓ Node.js 18 or higher
+     Download: https://nodejs.org
+     Click "LTS" version (recommended)
+   
+   ✓ MySQL 8.0 or higher
+     Download: https://dev.mysql.com/downloads/
+     Choose "MySQL Community Server"
+   
+   To verify installations, open terminal and type:
+   node --version    (should show v18 or higher)
+   mysql --version   (should show 8.0 or higher)
+
+═══════════════════════════════════════════════════════════
+
+2. SETUP DATABASE
+   ──────────────
+   STEP 1: Open MySQL
+   - Open MySQL Command Line (or MySQL Workbench)
+   - Login with your root password
+   
+   STEP 2: Run schema file
+   In MySQL, type:
+   
+   source database/final_schema.sql;
+   
+   (This creates the database and all tables)
+   
+   STEP 3: Add test data
+   In MySQL, type:
+   
+   source database/seed_data.sql;
+   
+   (This adds sample users and data)
+   
+   STEP 4: Verify it worked
+   In MySQL, type:
+   
+   USE university_staff_tracker_copy;
+   SHOW TABLES;
+   
+   You should see 8 tables listed.
+
+═══════════════════════════════════════════════════════════
+
+3. CONFIGURE PROJECT
+   ─────────────────
+   STEP 1: Create environment file
+   - Copy file ".env.example" 
+   - Rename the copy to ".env"
+   
+   STEP 2: Edit .env file
+   Open .env in any text editor and change:
+   
+   MYSQL_PASSWORD=your_mysql_password
+   ↑ Replace with YOUR MySQL password
+   
+   SESSION_SECRET=any-random-32-character-string
+   ↑ Replace with any random text (min 32 characters)
+   
+   Save and close the file.
+
+═══════════════════════════════════════════════════════════
+
+4. INSTALL & RUN
+   ─────────────
+   Open terminal in the project folder and run:
+   
+   npm install
+   
+   Wait for installation to complete (1-2 minutes)
+   
+   Then run:
+   
+   npm run dev
+   
+   Wait until you see:
+   "Server running on http://localhost:5000"
+   "Frontend running on http://localhost:5173"
+
+═══════════════════════════════════════════════════════════
+
+5. OPEN BROWSER
+   ────────────
+   Open your web browser and go to:
+   
+   http://localhost:5173
+   
+   You should see a login page.
+   
+   Login with test account:
+   Username: ADMIN001
+   Password: password123
+   
+   ✓ You're in! Explore the system.
+
+═══════════════════════════════════════════════════════════
+
+TEST ACCOUNTS (all use password: password123)
+─────────────────────────────────────────────
+ADMIN001     - Full admin access
+CM001        - Class Moderator (mark attendance)
+T001         - Teacher (view own data)
+HEAD001      - Department Head (view analytics)
+HR002        - HR Assistant (manage attendance)
+S001         - Staff (view own data)
+
+═══════════════════════════════════════════════════════════
+
+COMMON PROBLEMS & SOLUTIONS
+───────────────────────────
+
+Problem: "Cannot connect to MySQL"
+Solution: Check your MySQL password in .env file
+
+Problem: "Port 5000 already in use"
+Solution: Change PORT=5000 to PORT=5001 in .env file
+
+Problem: "npm install failed"
+Solution: Delete node_modules folder and run npm install again
+
+Problem: "Login doesn't work"
+Solution: Make sure you ran seed_data.sql to create test users
+
+═══════════════════════════════════════════════════════════
+
+DONE! 
+If you have any issues, check the detailed README.md file.
+
+═══════════════════════════════════════════════════════════
