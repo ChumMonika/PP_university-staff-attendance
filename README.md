@@ -1,136 +1,124 @@
-# University Staff Attendance System
+# **This repository contains both source code and 3 required project documents for submission.**
 
-A full-stack web application for managing university staff and student attendance, leave requests, and class schedules.
+# University Staff Attendance Management System
 
-## Requirements
+A web-based attendance and leave management system for university teachers and staff, built with modern technologies and clean architecture principles.
 
-- **Node.js** v20+
-- **MySQL** 8.0+
-- **npm**
+---
 
-## Quick Setup
+## 📄 Project Documentation
 
-### 1. Clone Repository
+All **must-submit** project 3 report documents are located in the **`Draft-ReportPPracticum/`** folder:
+
+1. **Project Practicum Draft Report** - `Draft-ReportPPracticum/1. Attendace_University_Staff_Report_Final.pdf`
+2. **Functional Requirements** - `Draft-ReportPPracticum/2. IC-Functional-Requirements.pdf`
+3. **Non-Functional Requirements** - `Draft-ReportPPracticum/3. Non-FunctionalRequirements.pdf`
+
+---
+
+## ⚙️ System Requirements
+
+- **Node.js** v20 or higher
+- **MySQL** 8.0 or higher
+- **npm** (comes with Node.js)
+
+---
+
+## 🚀 Setup Instructions
+
+### Step 1: Clone the Repository
 
 ```bash
 git clone https://github.com/ChumMonika/PP_university-staff-attendance.git
 cd PP_university-staff-attendance
 ```
 
-### 2. Install Dependencies
+### Step 2: Install Dependencies
 
 ```bash
 npm install
 ```
 
-### 3. Database Setup
+### Step 3: Setup Database
 
-Open MySQL and run:
+Open MySQL and execute:
 
 ```sql
 source database/final_schema.sql;
 source database/seed_data.sql;
 ```
 
-This creates database `university_staff_tracker_copy` with test data.
+This creates the database `university_staff_tracker_copy` with sample data.
 
-### 4. Configure Environment
+### Step 4: Configure Environment Variables
+
+Copy the environment template:
 
 ```bash
-# Copy template
 cp .env.example .env
 ```
 
 Edit `.env` and update:
 - `MYSQL_PASSWORD` - Your MySQL root password
-- `SESSION_SECRET` - Generate a random 32-character string
+- `SESSION_SECRET` - A random 32-character string
 
-### 5. Start Application
+### Step 5: Run the Application
 
 ```bash
 npm run dev
 ```
 
+Access the application:
 - **Frontend**: http://localhost:5173
-- **Backend**: http://localhost:5000
+- **Backend API**: http://localhost:5000
 
-## Test Accounts
+---
 
-Login with these credentials (password: `password123`):
+## 🔑 Test Login Accounts
 
-| Username | Role | Access |
-|----------|------|--------|
-| ADMIN001 | Admin | Full system access |
-| CM001 | Class Moderator | Mark attendance |
-| T001 | Teacher | View schedule, submit leave |
-| HEAD001 | Department Head | Department analytics, approve leave |
-| HR002 | HR Assistant | Mark staff attendance, manage leave |
-| S001 | Staff | View attendance, submit leave |
+Use these accounts to test the system (password: `password123`):
 
-## Available Scripts
+| Username | Role | Description |
+|----------|------|-------------|
+| ADMIN001 | Admin | System configuration and user management |
+| HEAD001 | Department Head | Approve leave, view department reports |
+| HR002 | HR Assistant | Mark staff attendance |
+| CM001 | Class Moderator | Mark teacher attendance |
+| T001 | Teacher | Submit leave, view schedule |
+| S001 | Staff | Submit leave, view attendance |
+
+---
+
+## 🛠️ Available Commands
 
 ```bash
-npm run dev      # Run development server
+npm run dev      # Start development server
 npm run build    # Build for production
 npm test         # Run test suite (72 tests)
 npm run check    # TypeScript type checking
 ```
 
-## Project Structure
+---
+
+## 📂 Project Structure
 
 ```
- client/              # React frontend
-    src/
-       components/  # UI components
-       pages/       # Page components
-       lib/         # Utilities, API client
- server/              # Node.js backend
-    core/            # Business logic
-    infrastructure/  # Database repositories
-    presentation/    # Controllers, routes
- database/            # SQL schema and seed data
- shared/              # Shared TypeScript types
+client/              # React frontend (Vite + TypeScript)
+server/              # Node.js backend (Express + Clean Architecture)
+  ├── core/          # Business logic and use cases
+  ├── infrastructure/# Database repositories
+  └── presentation/  # API controllers and routes
+database/            # MySQL schema and seed data
+shared/              # Shared types and schemas
 ```
 
-## Key Features
+---
 
-- **Role-Based Access Control** (8 user roles)
-- **Attendance Tracking** (students, teachers, staff)
-- **Leave Request Management** (submit, approve/reject)
-- **Class Scheduling**
-- **Department & Major Configuration**
-- **Analytics Dashboard**
+## ✨ Key Features
 
-## Technologies
-
-- **Frontend**: React 18, TypeScript, Tailwind CSS, shadcn/ui
-- **Backend**: Node.js 20, Express.js, TypeScript
-- **Database**: MySQL 8.0, Drizzle ORM
-- **Testing**: Vitest (72 passing tests)
-
-## Troubleshooting
-
-**Cannot connect to MySQL?**
-- Check `.env` has correct `MYSQL_PASSWORD`
-- Verify MySQL is running: `mysql -u root -p`
-
-**Port 5000 already in use?**
-- Change `PORT` in `.env` to 5001
-
-**Login fails?**
-- Ensure you ran `seed_data.sql`
-- Use username `ADMIN001` (uppercase)
-- Password is `password123`
-
-**npm install fails?**
-- Check Node.js version: `node --version` (must be 20+)
-- Delete `node_modules/` and retry
-
-## Documentation
-
-- **[TEACHER_NOTES.md](TEACHER_NOTES.md)** - Detailed evaluation guide for instructors
-- **[SETUP_GUIDE.txt](SETUP_GUIDE.txt)** - Simple text-based setup instructions
-
-## License
-
-Educational project for university coursework.
+- **Role-Based Access Control** - 6 different user roles
+- **Digital Attendance Tracking** - For teachers and staff
+- **Leave Management** - Submit and approve leave requests
+- **Schedule Management** - Semester-based class schedules
+- **Department Analytics** - Reports and statistics
+- **Clean Architecture** - Separation of concerns, testable code
