@@ -41,20 +41,28 @@ npm install
 
 ### Step 3: Setup Database
 Open powershell to run the cmd:
+```bash
 mysql -u root -p
+```
 => Then enter your MySQL password.
 
 You should see:
+```bash
 mysql>
+```
 
 Now you can run 2 SQL files in the project folder to set up the database and seed some data for test
 
 (inside MySQL) Now run:
+```bash
 source database/final_schema.sql;
 source database/seed_data.sql;
+```
 
 After that, you can exit MySQL by run: 
+```bash
 exit;
+```
 
 This creates the database `university_staff_tracker_copy` with sample data.
 
@@ -62,7 +70,10 @@ This creates the database `university_staff_tracker_copy` with sample data.
 Edit `.env.example .env` file to `.env` and update:
 - `MYSQL_PASSWORD` - Your MySQL root password
 - `SESSION_SECRET` - A random 32-character string 
-can generate: node -e "console.log(crypto.randomBytes(32).toString('hex'))"
+can generate session_secrete through: 
+```bash
+node -e "console.log(crypto.randomBytes(32).toString('hex'))"
+```
 
 ### Step 5: Run the Application
 
