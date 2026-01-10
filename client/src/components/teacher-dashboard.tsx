@@ -78,10 +78,9 @@ export default function TeacherDashboard({ user }: TeacherDashboardProps) {
     const total = attendanceHistory.length;
     const present = attendanceHistory.filter(a => a.status === 'present').length;
     const absent = attendanceHistory.filter(a => a.status === 'absent').length;
-    const late = attendanceHistory.filter(a => a.status === 'late').length;
     const attendanceRate = total > 0 ? Math.round((present / total) * 100) : 0;
 
-    return { total, present, absent, late, attendanceRate };
+    return { total, present, absent, late: 0, attendanceRate };
   };
 
   const stats = calculateStats();
@@ -460,7 +459,7 @@ export default function TeacherDashboard({ user }: TeacherDashboardProps) {
                         <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
                         <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                         <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time</th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Notes</th>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Marked By</th>
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
@@ -632,7 +631,7 @@ export default function TeacherDashboard({ user }: TeacherDashboardProps) {
                         <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                         <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Submitted</th>
                         <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reason</th>
-                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Note</th>
+                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Head_Note</th>
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
@@ -667,7 +666,7 @@ export default function TeacherDashboard({ user }: TeacherDashboardProps) {
                             {lr.reason}
                           </td>
                           <td className="px-4 py-4 text-sm text-gray-500 max-w-xs truncate">
-                            {lr.status === 'rejected' ? (lr.rejectionReason || 'N/A') : 'N/A'}
+                            {lr.status === 'rejected' ? (lr.rejectionReason || 'No reason provided') : (lr.status === 'approved' ? 'Approved' : 'N/A')}
                           </td>
                         </tr>
                       ))}

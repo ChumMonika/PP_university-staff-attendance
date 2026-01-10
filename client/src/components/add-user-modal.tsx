@@ -189,8 +189,7 @@ export default function AddUserModal({ isOpen, onClose, editingUser }: AddUserMo
         departmentId: "",
         majorId: "",
         classId: "",
-        schedule: "08:00-17:00",
-      });
+        schedule: "08:00-17:00",        status: "active",      });
     },
     onError: (error: any) => {
       toast({

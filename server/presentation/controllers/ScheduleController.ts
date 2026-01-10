@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import { ScheduleUseCase } from "../../core/use-cases/ScheduleUseCase";
-import { insertScheduleSchema } from "@shared/schema";
+import { insertScheduleSchema, updateScheduleSchema } from "@shared/schema";
 import { UnauthorizedError, NotFoundError } from "../../core/errors";
 
 export class ScheduleController {
@@ -10,18 +10,18 @@ export class ScheduleController {
     const userId = (req.session as any).userId;
     const userRole = (req.session as any).userRole;
     const day = req.query.day as string | undefined;
-    const majorId = req.query.majorId ? parseInt(req.query.majorId as string, 10) : undefined;
+    const major = req.query.major as string | undefined;
 
     const schedules = await this.scheduleUseCase.getAllSchedules(userId, userRole, {
       day,
-      majorId,
+      major,
     });
 
     res.json(schedules);
   }
 
   async create(req: Request, res: Response, next: NextFunction): Promise<void> {
-    const scheduleData = insertScheduleSchema.parse(req.body);
+    const scheduleData = insertScheduleSchema.parse(req.body) as any;
     const userRole = (req.session as any).userRole;
 
     if (userRole !== "admin") {
@@ -47,31 +47,38 @@ export class ScheduleController {
       return;
     }
 
-    const validatedSchedules = schedules.map((s) => insertScheduleSchema.parse(s));
+    const validatedSchedules = schedules.map((s) => insertScheduleSchema.parse(s)) as any[];
     const newSchedules = await this.scheduleUseCase.createBulkSchedules(validatedSchedules);
 
     res.json(newSchedules);
   }
 
   async update(req: Request, res: Response, next: NextFunction): Promise<void> {
-    const { id } = req.params;
-    const updates = insertScheduleSchema.partial().parse(req.body);
-    const userRole = (req.session as any).userRole;
+    try {
+      const { id } = req.params;
+      const updates = updateScheduleSchema.parse(req.body);
+      const userRole = (req.session as any).userRole;
 
-    if (userRole !== "admin") {
-      throw new UnauthorizedError("Forbidden");
+      console.log('Update schedule request:', { id, updates, userRole });
+
+      if (userRole !== "admin") {
+        throw new UnauthorizedError("Forbidden");
+      }
+
+      const updatedSchedule = await this.scheduleUseCase.updateSchedule(
+        parseInt(id, 10),
+        updates
+      );
+
+      if (!updatedSchedule) {
+        throw new NotFoundError("Schedule not found");
+      }
+
+      res.json(updatedSchedule);
+    } catch (error) {
+      console.error('Error updating schedule:', error);
+      next(error);
     }
-
-    const updatedSchedule = await this.scheduleUseCase.updateSchedule(
-      parseInt(id, 10),
-      updates
-    );
-
-    if (!updatedSchedule) {
-      throw new NotFoundError("Schedule not found");
-    }
-
-    res.json(updatedSchedule);
   }
 
   async delete(req: Request, res: Response, next: NextFunction): Promise<void> {

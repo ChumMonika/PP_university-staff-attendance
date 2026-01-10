@@ -32,8 +32,8 @@ export class ScheduleUseCase {
     const activeClassIds = allClasses.filter((cls) => cls.isActive === 1).map((cls) => cls.id);
 
     if (userRole === "class_moderator" || userRole === "moderator") {
-      const assignedClasses = await (this.storage as any).getClassModeratorsByUser(userId);
-      const classIds = assignedClasses.map((cm: any) => cm.classId);
+      const assignedClasses = await this.storage.getClassModeratorsByUser(userId);
+      const classIds = assignedClasses.map((cm) => cm.classId);
 
       if (classIds.length === 0) {
         return [];
@@ -137,13 +137,16 @@ export class ScheduleUseCase {
   }
 
   async updateSchedule(id: number, updates: Partial<Schedule>): Promise<ScheduleWithEnrichment> {
+    console.log('ScheduleUseCase.updateSchedule called with:', { id, updates });
+
     const now = new Date();
-    const timestamp = now.toISOString().slice(0, 19).replace("T", " ");
 
     const updatedSchedule = await this.storage.updateSchedule(id, {
       ...updates,
-      updatedAt: timestamp as any,
+      updatedAt: now as any,
     });
+
+    console.log('Updated schedule result:', updatedSchedule);
 
     if (!updatedSchedule) {
       throw new NotFoundError("Schedule not found");

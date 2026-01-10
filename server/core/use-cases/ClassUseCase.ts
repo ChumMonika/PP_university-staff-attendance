@@ -78,7 +78,7 @@ export class ClassUseCase {
 
   async createClass(classData: InsertClass & { name?: string }): Promise<Class> {
     // Auto-generate class name: "MAJORSHORT YyearSsemester GROUP" (uppercase)
-    const major = await (this.storage as any).getMajorById(classData.majorId);
+    const major = await this.storage.getMajor(classData.majorId);
     if (!major) {
       throw new ValidationError("Invalid major ID");
     }
@@ -103,7 +103,7 @@ export class ClassUseCase {
       }
 
       const finalMajorId = updates.majorId || existingClass.majorId;
-      const major = await (this.storage as any).getMajorById(finalMajorId);
+      const major = await this.storage.getMajor(finalMajorId);
       if (!major) {
         throw new ValidationError("Invalid major ID");
       }

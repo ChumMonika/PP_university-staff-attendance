@@ -15,16 +15,13 @@ interface HeadDashboardProps {
 export default function HeadDashboard({ user }: HeadDashboardProps) {
   const [activeSection, setActiveSection] = useState("dashboard");
 
-  // Queries
+  // Queries - Only fetch if user is authenticated
   const { data: leaveRequests } = useQuery<LeaveRequest[]>({
     queryKey: ["/api/leave-requests"],
+    enabled: !!user, // Only run query if user exists
     refetchOnMount: true,
     staleTime: 0,
   });
-
-  // Debug: Log leave requests data
-  console.log("Head Dashboard - All leave requests:", leaveRequests);
-  console.log("Head Dashboard - Pending count:", leaveRequests?.filter(req => req.status === 'pending').length);
 
   const pendingCount = leaveRequests?.filter(req => req.status === 'pending').length || 0;
 

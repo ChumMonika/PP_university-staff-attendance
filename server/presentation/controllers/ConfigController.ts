@@ -24,7 +24,7 @@ export class ConfigController {
       throw new UnauthorizedError("Forbidden");
     }
 
-    const newDepartment = await this.configUseCase.createDepartment(departmentData);
+    const newDepartment = await this.configUseCase.createDepartment(departmentData as any);
     res.json(newDepartment);
   }
 
@@ -86,7 +86,7 @@ export class ConfigController {
       throw new UnauthorizedError("Forbidden");
     }
 
-    const newMajor = await this.configUseCase.createMajor(majorData);
+    const newMajor = await this.configUseCase.createMajor(majorData as any);
     res.json(newMajor);
   }
 
@@ -135,7 +135,7 @@ export class ConfigController {
       throw new UnauthorizedError("Forbidden");
     }
 
-    const newSubject = await this.configUseCase.createSubject(subjectData);
+    const newSubject = await this.configUseCase.createSubject(subjectData as any);
     res.json(newSubject);
   }
 

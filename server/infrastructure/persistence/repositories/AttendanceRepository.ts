@@ -1,4 +1,4 @@
-import { eq, and, gte, lte, desc } from "drizzle-orm";
+import { eq, and, gte, lt, lte, desc } from "drizzle-orm";
 import { attendance, users, type Attendance, type InsertAttendance } from "@shared/schema";
 import type { IAttendanceRepository } from "./interfaces";
 
@@ -43,22 +43,37 @@ export class AttendanceRepository implements IAttendanceRepository {
   }
 
   async findByDate(date: string): Promise<Attendance[]> {
-    const dateObj = new Date(date);
+    // Normalize to a day range to avoid timezone equality issues
+    const start = new Date(date);
+    start.setHours(0, 0, 0, 0);
+    const end = new Date(start);
+    end.setDate(end.getDate() + 1);
+
     return await this.db
       .select()
       .from(attendance)
-      .where(eq(attendance.date, dateObj))
+      .where(and(gte(attendance.date, start), lt(attendance.date, end)))
       .orderBy(attendance.userId);
   }
 
   async findByUserAndDate(userId: number, date: string): Promise<Attendance | undefined> {
-    const dateObj = new Date(date);
-    const result = await this.db
+    // Some databases / drivers return Date objects with timezone offsets when
+    // comparing directly which can cause equality checks to fail. To be robust
+    // we fetch recent attendance for the user and compare the date portion in
+    // JavaScript using YYYY-MM-DD strings.
+    const rows = await this.db
       .select()
       .from(attendance)
-      .where(and(eq(attendance.userId, userId), eq(attendance.date, dateObj)))
-      .limit(1);
-    return result[0];
+      .where(eq(attendance.userId, userId))
+      .orderBy(desc(attendance.date))
+      .limit(10);
+
+    for (const r of rows) {
+      const rowDate = r.date instanceof Date ? r.date.toISOString().split('T')[0] : String(r.date).split('T')[0];
+      if (rowDate === date) return r;
+    }
+
+    return undefined;
   }
 
   async findByDepartment(departmentId: number): Promise<Attendance[]> {
@@ -91,6 +106,28 @@ export class AttendanceRepository implements IAttendanceRepository {
   }
 
   async markAttendance(attendanceData: InsertAttendance): Promise<Attendance> {
+    // Check if attendance already exists for this user and date
+    const dateStr = attendanceData.date instanceof Date 
+      ? attendanceData.date.toISOString().split('T')[0] 
+      : attendanceData.date;
+    const existing = await this.findByUserAndDate(attendanceData.userId, dateStr);
+    
+    if (existing) {
+      // Update existing attendance record
+      const updated = await this.update(existing.id, {
+        status: attendanceData.status,
+        isLate: attendanceData.isLate,
+        scheduleId: attendanceData.scheduleId,
+        notes: attendanceData.notes,
+        markedAt: attendanceData.markedAt,
+        markedBy: attendanceData.markedBy,
+      });
+      if (!updated) {
+        throw new Error("Failed to update attendance record");
+      }
+      return updated;
+    }
+    // Create new attendance record if it doesn't exist
     return await this.create(attendanceData);
   }
 }

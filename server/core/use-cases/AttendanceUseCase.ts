@@ -173,9 +173,9 @@ export class AttendanceUseCase {
     });
 
     const attendance: AttendanceRecord[] = [];
-    attendance.push(...teacherEntries);
+    attendance.push(...(teacherEntries as any));
     attendance.push(
-      ...staffAttendance.map((a) => {
+      ...(staffAttendance.map((a) => {
         const user = allUsers.find((u) => u.id === a.userId);
         return {
           ...a,
@@ -183,7 +183,7 @@ export class AttendanceUseCase {
           classId: null,
           classLabel: null,
         };
-      })
+      }) as any)
     );
 
     // Add approved leaves
@@ -254,7 +254,7 @@ export class AttendanceUseCase {
       };
     }
 
-    const classObj = await (this.storage as any).getClass(user.classId);
+    const classObj = await this.storage.getClass(user.classId);
 
     if (!classObj) {
       return {
@@ -350,8 +350,8 @@ export class AttendanceUseCase {
 
     const attendance = await this.storage.markAttendance({
       userId,
-      date,
-      status,
+      date: date as any,
+      status: status as any,
       isLate,
       markedAt: new Date(),
       markedBy: currentUserId,

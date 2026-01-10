@@ -181,6 +181,8 @@ export default function ClassModeratorDashboard({ user }: ClassModeratorDashboar
   const { data: allSchedules } = useQuery<ScheduleWithTeacher[]>({
     queryKey: ["/api/schedules"],
     enabled: isClassActive, // ✅ Only fetch if class is active
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
   });
 
   // Filter schedules for today only
@@ -191,9 +193,13 @@ export default function ClassModeratorDashboard({ user }: ClassModeratorDashboar
   const classLabel = classStatus?.classInfo?.name || moderatorClass?.name || "Class";
 
   // Get attendance data for today
-  const { data: attendanceToday } = useQuery<any[]>({
+  const { data: attendanceToday, refetch: refetchAttendance } = useQuery<any[]>({
     queryKey: ["/api/attendance-today"],
     enabled: isClassActive, // ✅ Only fetch if class is active
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+    staleTime: 0, // Always consider data stale
+    gcTime: 0, // Don't cache
   });
 
   // Combine schedule with attendance
@@ -217,16 +223,38 @@ export default function ClassModeratorDashboard({ user }: ClassModeratorDashboar
 
   // Mark attendance mutation
   const markAttendanceMutation = useMutation({
-    mutationFn: ({ userId, status }: { userId: number; status: "present" | "absent" }) => {
+    mutationFn: async ({ userId, status }: { userId: number; status: "present" | "absent" }) => {
       const today = new Date().toISOString().split('T')[0];
-      return apiRequest("POST", "/api/attendance/mark", { 
+      const response = await apiRequest("POST", "/api/attendance/mark", { 
         userId, 
         date: today, 
         status 
       });
+      return response.json();
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/attendance-today"] });
+    onSuccess: async (data, variables) => {
+      // Immediately update the cache with new attendance data
+      queryClient.setQueryData(['/api/attendance-today'], (old: any[] | undefined) => {
+        if (!old) return old;
+        
+        return old.map(user => {
+          if (user.id === variables.userId) {
+            return {
+              ...user,
+              attendance: {
+                id: data.id,
+                userId: data.userId,
+                date: data.date,
+                status: data.status,
+                markedAt: data.markedAt,
+                markedBy: data.markedBy
+              }
+            };
+          }
+          return user;
+        });
+      });
+      
       toast({
         title: "Success",
         description: "Attendance marked successfully",

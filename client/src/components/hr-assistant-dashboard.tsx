@@ -61,7 +61,7 @@ export default function HRAssistantDashboard({ user }: HRAssistantDashboardProps
   // const [attendanceShowLimit, setAttendanceShowLimit] = useState<number>(10);
 
   // Get today's staff attendance
-  const { data: todayStaffAttendance, isLoading: loadingTodayAttendance } = useQuery<{
+  const { data: todayStaffAttendance, isLoading: loadingTodayAttendance, refetch: refetchStaffAttendance } = useQuery<{
     id: number;
     name: string;
     uniqueId: string;
@@ -70,6 +70,10 @@ export default function HRAssistantDashboard({ user }: HRAssistantDashboardProps
     markedByName: string | null;
   }[]>({
     queryKey: ["/api/staff-attendance"],
+    refetchOnMount: true,
+    refetchOnWindowFocus: true,
+    staleTime: 0, // Always consider data stale
+    gcTime: 0, // Don't cache
   });
 
   // Get all staff attendance history
@@ -128,9 +132,24 @@ export default function HRAssistantDashboard({ user }: HRAssistantDashboardProps
       const today = new Date().toISOString().split('T')[0];
       return apiRequest("POST", "/api/attendance/mark", { userId, date: today, status }).then(r => r.json());
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/attendance-today"] });
-      queryClient.invalidateQueries({ queryKey: ["/api/staff-attendance"] });
+    onSuccess: async (data, variables) => {
+      // Immediately update the cache with new attendance data
+      queryClient.setQueryData(['/api/staff-attendance'], (old: any[] | undefined) => {
+        if (!old) return old;
+        const updated = old.map(staff => {
+          if (staff.id === variables.userId) {
+            return {
+              ...staff,
+              status: data.status,
+              markedAt: data.markedAt,
+              markedByName: "You"
+            };
+          }
+          return staff;
+        });
+        return updated;
+      });
+      
       toast({
         title: "Success",
         description: "Attendance marked successfully",
@@ -339,7 +358,7 @@ export default function HRAssistantDashboard({ user }: HRAssistantDashboardProps
                             {staff.markedByName || 'N/A'}
                           </td>
                           <td className="px-4 py-4 whitespace-nowrap">
-                            {staff.status === 'pending' && (
+                            {staff.status === 'pending' ? (
                               <Button
                                 size="sm"
                                 className="bg-green-600 hover:bg-green-700 text-white"
@@ -349,6 +368,13 @@ export default function HRAssistantDashboard({ user }: HRAssistantDashboardProps
                                 <Check className="w-4 h-4 mr-1" />
                                 Mark Present
                               </Button>
+                            ) : (
+                              <span className="text-xs text-gray-500">
+                                ✓ Marked at {staff.markedAt ? new Date(staff.markedAt).toLocaleTimeString([], {
+                                  hour: '2-digit',
+                                  minute: '2-digit'
+                                }) : 'N/A'}
+                              </span>
                             )}
                           </td>
                         </tr>

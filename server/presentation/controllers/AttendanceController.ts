@@ -68,7 +68,7 @@ export class AttendanceController {
       status,
       userRole,
       currentUserId,
-      scheduleId,
+      scheduleId || undefined, // Convert null to undefined
       targetUser.schedule
     );
 

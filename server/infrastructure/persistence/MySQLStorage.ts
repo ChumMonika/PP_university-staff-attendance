@@ -84,6 +84,10 @@ export class MySQLStorage implements IStorage {
   /* ========= Users ========= */
 
   async getUser(id: number) {
+    return this.userRepository.findById(id);
+  }
+
+  async getUserWithDepartment(id: number) {
     return this.userRepository.findByIdWithDepartment(id);
   }
 
@@ -315,11 +319,24 @@ export class MySQLStorage implements IStorage {
   }
 
   async updateSchedule(id: number, updates: Partial<Schedule>) {
-    await this.db
-      .update(schedules)
-      .set(updates)
-      .where(eq(schedules.id, id));
-    return this.getScheduleById(id);
+    console.log('MySQLStorage.updateSchedule called with:', { id, updates });
+
+    try {
+      await this.db
+        .update(schedules)
+        .set(updates)
+        .where(eq(schedules.id, id));
+
+      console.log('Update query executed successfully');
+
+      const result = await this.getScheduleById(id);
+      console.log('getScheduleById result:', result);
+
+      return result;
+    } catch (error) {
+      console.error('Error in updateSchedule:', error);
+      throw error;
+    }
   }
 
   async deleteSchedule(id: number) {

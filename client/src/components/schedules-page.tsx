@@ -396,8 +396,7 @@ const hierarchicalSchedules = useMemo(() => {
       day: formData.day,
       startTime: formData.startTime,
       endTime: formData.endTime,
-      room: formData.room || null,
-      isActive: true,
+      room: formData.room || "TBA",
     });
   };
 

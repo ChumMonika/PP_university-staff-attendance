@@ -27,7 +27,7 @@ export class UserController {
 
     const userData = insertUserSchema.parse(req.body);
 
-    const user = await this.userUseCase.createUser(userData);
+    const user = await this.userUseCase.createUser(userData as any);
     res.json(user);
   }
 

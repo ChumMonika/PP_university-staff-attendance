@@ -74,7 +74,7 @@ export default function LeaveRequestsPage() {
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
         <DashboardHeader 
-          user={{ id: 0, name: "Head User", uniqueId: "0000", department: "All", role: "head", status: "active" }}
+          user={{ id: 0, name: "Head User", uniqueId: "0000", department: { id: 0, name: "All", shortName: "ALL", createdAt: "", updatedAt: "" }, role: "head", status: "active", createdAt: "", updatedAt: "" }}
           title="Leave Requests Dashboard"
           subtitle="Pending and processed leave requests"
           borderColor="border-university-head"

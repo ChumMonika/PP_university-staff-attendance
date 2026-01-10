@@ -22,7 +22,7 @@ export class ClassController {
       throw new UnauthorizedError("Forbidden");
     }
 
-    const newClass = await this.classUseCase.createClass(classData);
+    const newClass = await this.classUseCase.createClass(classData as any);
     res.json(newClass);
   }
 
@@ -35,7 +35,7 @@ export class ClassController {
       throw new UnauthorizedError("Forbidden");
     }
 
-    const updatedClass = await this.classUseCase.updateClass(parseInt(id, 10), updates);
+    const updatedClass = await this.classUseCase.updateClass(parseInt(id, 10), updates as any);
 
     if (!updatedClass) {
       throw new NotFoundError("Class not found");
@@ -52,12 +52,7 @@ export class ClassController {
       throw new UnauthorizedError("Forbidden");
     }
 
-    const deleted = await this.classUseCase.deleteClass(parseInt(id, 10));
-
-    if (!deleted) {
-      throw new NotFoundError("Class not found");
-    }
-
+    await this.classUseCase.deleteClass(parseInt(id, 10));
     res.json({ message: "Class deleted" });
   }
 }

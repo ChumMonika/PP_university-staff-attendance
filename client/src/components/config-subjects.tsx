@@ -138,7 +138,7 @@ export default function SubjectsConfig() {
         name: subject.name,
         code: subject.code || "",
         credits: subject.credits?.toString() || "",
-        description: subject.description || "",
+        description: "",
       });
     } else {
       setEditingSubject(null);
@@ -275,7 +275,7 @@ export default function SubjectsConfig() {
                       <span className="text-sm text-gray-600">{subject.credits || "—"}</span>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="text-sm text-gray-600">{subject.description || "—"}</span>
+                      <span className="text-sm text-gray-600">—</span>
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">

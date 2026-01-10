@@ -1,11 +1,16 @@
 -- ===============================
 -- FINAL DATABASE SCHEMA
 -- Project: University Staff Attendance Tracker
--- Source of Truth for DB structure
+-- Portable & Fresh Install Safe
 -- ===============================
 
-CREATE DATABASE university_staff_tracker_copy;
-use university_staff_tracker_copy;
+DROP DATABASE IF EXISTS university_staff_tracker_copy;
+CREATE DATABASE university_staff_tracker_copy
+  CHARACTER SET utf8mb4
+  COLLATE utf8mb4_unicode_ci;
+
+USE university_staff_tracker_copy;
+
 -- ===============================
 -- departments
 -- ===============================
@@ -15,7 +20,7 @@ CREATE TABLE departments (
   short_name VARCHAR(50) NOT NULL UNIQUE,
   created_at DATETIME NOT NULL,
   updated_at DATETIME NOT NULL
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ===============================
 -- majors
@@ -27,11 +32,12 @@ CREATE TABLE majors (
   department_id INT NOT NULL,
   created_at DATETIME NOT NULL,
   updated_at DATETIME NOT NULL,
+
   CONSTRAINT fk_majors_department
     FOREIGN KEY (department_id)
     REFERENCES departments(id)
     ON DELETE CASCADE
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ===============================
 -- classes
@@ -50,15 +56,13 @@ CREATE TABLE classes (
   created_at DATETIME NOT NULL,
   updated_at DATETIME NOT NULL,
 
-  UNIQUE KEY unique_class (
-    major_id, year, semester, `group`, academic_year
-  ),
+  UNIQUE KEY unique_class (major_id, year, semester, `group`, academic_year),
 
   CONSTRAINT fk_classes_major
     FOREIGN KEY (major_id)
     REFERENCES majors(id)
     ON DELETE CASCADE
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ===============================
 -- users
@@ -80,8 +84,7 @@ CREATE TABLE users (
   status ENUM('active','inactive','banned','pending','suspended')
     NOT NULL DEFAULT 'active',
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-    ON UPDATE CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
   CONSTRAINT fk_users_department
     FOREIGN KEY (department_id)
@@ -92,7 +95,7 @@ CREATE TABLE users (
     FOREIGN KEY (class_id)
     REFERENCES classes(id)
     ON DELETE SET NULL
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ===============================
 -- subjects
@@ -104,7 +107,7 @@ CREATE TABLE subjects (
   credits INT NOT NULL DEFAULT 3,
   created_at DATETIME NOT NULL,
   updated_at DATETIME NOT NULL
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ===============================
 -- schedules
@@ -135,7 +138,7 @@ CREATE TABLE schedules (
     FOREIGN KEY (teacher_id)
     REFERENCES users(id)
     ON DELETE CASCADE
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ===============================
 -- attendance
@@ -167,7 +170,7 @@ CREATE TABLE attendance (
     FOREIGN KEY (marked_by)
     REFERENCES users(id)
     ON DELETE SET NULL
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ===============================
 -- leave_requests
@@ -194,4 +197,12 @@ CREATE TABLE leave_requests (
     FOREIGN KEY (responded_by)
     REFERENCES users(id)
     ON DELETE SET NULL
-);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ===============================
+-- INDEXES (Performance)
+-- ===============================
+CREATE INDEX idx_users_department ON users(department_id);
+CREATE INDEX idx_attendance_user_date ON attendance(user_id, date);
+CREATE INDEX idx_leave_user ON leave_requests(user_id);
+CREATE INDEX idx_schedules_class ON schedules(class_id);

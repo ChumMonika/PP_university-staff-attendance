@@ -22,7 +22,9 @@ export class LeaveRequestUseCase {
       startDate: new Date(startDate),
       endDate: new Date(endDate),
       reason,
-    });
+      status: "pending",
+      submittedAt: new Date(),
+    } as any);
 
     return leaveRequest;
   }

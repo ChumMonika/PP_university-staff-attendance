@@ -10,22 +10,26 @@ export class AuthController {
   ) {}
 
   async login(req: Request, res: Response, next: NextFunction): Promise<void> {
-    if (!req.body || !req.body.uniqueId || !req.body.password) {
-      res.status(400).json({
-        message: "Missing required fields",
-      });
-      return;
+    try {
+      if (!req.body || !req.body.uniqueId || !req.body.password) {
+        res.status(400).json({
+          message: "Missing required fields",
+        });
+        return;
+      }
+
+      const { uniqueId, password } = loginSchema.parse(req.body);
+
+      const result = await this.authUseCase.login(uniqueId, password);
+
+      // Set session
+      (req.session as any).userId = result.id;
+      (req.session as any).userRole = result.role;
+
+      res.json(result);
+    } catch (error) {
+      next(error);
     }
-
-    const { uniqueId, password } = loginSchema.parse(req.body);
-
-    const result = await this.authUseCase.login(uniqueId, password);
-
-    // Set session
-    (req.session as any).userId = result.id;
-    (req.session as any).userRole = result.role;
-
-    res.json(result);
   }
 
   async logout(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -45,7 +49,7 @@ export class AuthController {
         return;
       }
 
-      const user = await this.storage.getUser((req.session as any).userId);
+      const user = await this.storage.getUserWithDepartment((req.session as any).userId);
       if (!user) {
         res.status(404).json({ message: "User not found" });
         return;

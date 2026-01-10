@@ -32,6 +32,7 @@ export interface InsertClassModerator {
 export default interface IStorage {
   // Users
   getUser(id: number): Promise<User | undefined>;
+  getUserWithDepartment(id: number): Promise<any>;
   getUserByUniqueId(uniqueId: string): Promise<User | undefined>;
   getUserById(id: number): Promise<User | undefined>;
   getAllUsers(): Promise<User[]>;

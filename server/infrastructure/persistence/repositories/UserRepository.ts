@@ -1,4 +1,4 @@
-import { eq, and } from "drizzle-orm";
+import { eq, and, sql } from "drizzle-orm";
 import { users, departments, type User, type InsertUser } from "@shared/schema";
 import type { IUserRepository } from "./interfaces";
 
@@ -62,7 +62,11 @@ export class UserRepository implements IUserRepository {
   }
 
   async findByUniqueId(uniqueId: string): Promise<User | undefined> {
-    const result = await this.db.select().from(users).where(eq(users.uniqueId, uniqueId)).limit(1);
+    const result = await this.db
+      .select()
+      .from(users)
+      .where(sql`LOWER(${users.uniqueId}) = LOWER(${uniqueId})`)
+      .limit(1);
     return result[0];
   }
 
