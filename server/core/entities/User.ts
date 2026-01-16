@@ -2,13 +2,13 @@
 
 import type { User } from "@shared/schema";
 
-export interface Department {
+export interface UserDepartment {
   id: number;
   name: string;
 }
 
 export interface UserWithDepartment extends User {
-  department: Department | null;
+  department: UserDepartment | null;
 }
 
 export interface IUserRepository {

@@ -7,7 +7,7 @@ import {
   type User,
   type InsertUser,
 } from "@shared/schema";
-import type { IUserRepository, UserWithDepartment } from "../../../domain/repositories/IUserRepository";
+import type { IUserRepository, UserWithDepartment } from "./interfaces";
 
 export class UserRepository implements IUserRepository {
   constructor(private db: any) {}

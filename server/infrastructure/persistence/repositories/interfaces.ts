@@ -17,6 +17,15 @@ import type {
   InsertSubject,
 } from "@shared/schema";
 
+export interface UserDepartment {
+  id: number;
+  name: string;
+}
+
+export interface UserWithDepartment extends User {
+  department: UserDepartment | null;
+}
+
 // ========================================
 // BASE REPOSITORY INTERFACE
 // ========================================
@@ -34,6 +43,7 @@ export interface IBaseRepository<T, TInsert = Partial<T>> {
 // ========================================
 
 export interface IUserRepository extends IBaseRepository<User, InsertUser> {
+  findByIdWithDepartment(id: number): Promise<UserWithDepartment | undefined>;
   findByUniqueId(uniqueId: string): Promise<User | undefined>;
   findByRole(role: string): Promise<User[]>;
   findByDepartment(departmentId: number): Promise<User[]>;
