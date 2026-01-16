@@ -29,6 +29,8 @@ export class UserRepository implements IUserRepository {
         status: users.status,
         departmentId: users.departmentId,
         classId: users.classId,
+        workType: users.workType,
+        schedule: users.schedule,
         createdAt: users.createdAt,
         updatedAt: users.updatedAt,
         department: {
