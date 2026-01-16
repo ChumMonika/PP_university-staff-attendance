@@ -1,6 +1,13 @@
-import { eq, and, sql } from "drizzle-orm";
-import { users, departments, type User, type InsertUser } from "@shared/schema";
-import type { IUserRepository } from "./interfaces";
+// server/infrastructure/persistence/UserRepository.ts
+
+import { eq, sql } from "drizzle-orm";
+import {
+  users,
+  departments,
+  type User,
+  type InsertUser,
+} from "@shared/schema";
+import type { IUserRepository, UserWithDepartment } from "../domain/repositories/IUserRepository";
 
 export class UserRepository implements IUserRepository {
   constructor(private db: any) {}
@@ -10,7 +17,7 @@ export class UserRepository implements IUserRepository {
     return result[0];
   }
 
-  async findByIdWithDepartment(id: number): Promise<any> {
+  async findByIdWithDepartment(id: number): Promise<UserWithDepartment | undefined> {
     const result = await this.db
       .select({
         id: users.id,
@@ -33,8 +40,8 @@ export class UserRepository implements IUserRepository {
       .leftJoin(departments, eq(users.departmentId, departments.id))
       .where(eq(users.id, id))
       .limit(1);
-    
-    return result[0];
+
+    return result[0] ?? undefined;
   }
 
   async findAll(): Promise<User[]> {
