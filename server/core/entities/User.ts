@@ -1,26 +1,23 @@
-// server/domain/repositories/IUserRepository.ts
-
-import type { User } from "@shared/schema";
-
-export interface UserDepartment {
+export interface User {
   id: number;
+  uniqueId: string;
   name: string;
-}
-
-export interface UserWithDepartment extends User {
-  department: UserDepartment | null;
-}
-
-export interface IUserRepository {
-  findById(id: number): Promise<User | undefined>;
-  findByIdWithDepartment(id: number): Promise<UserWithDepartment | undefined>;
-  findAll(): Promise<User[]>;
-  create(user: any): Promise<User>;
-  update(id: number, updates: Partial<User>): Promise<User | undefined>;
-  delete(id: number): Promise<boolean>;
-  findByUniqueId(uniqueId: string): Promise<User | undefined>;
-  findByRole(role: string): Promise<User[]>;
-  findByDepartment(departmentId: number): Promise<User[]>;
-  findByClass(classId: number): Promise<User[]>;
-  updateUser(id: number, updates: Partial<User>): Promise<User | undefined>;
+  email: string | null;
+  password: string;
+  role:
+    | "head"
+    | "admin"
+    | "hr_assistant"
+    | "hr_backup"
+    | "class_moderator"
+    | "moderator"
+    | "teacher"
+    | "staff";
+  departmentId: number | null;
+  classId: number | null;
+  workType: string | null;
+  schedule: string | null;
+  status: "active" | "inactive" | "banned" | "pending" | "suspended";
+  createdAt: Date;
+  updatedAt: Date;
 }
