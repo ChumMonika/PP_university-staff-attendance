@@ -1,22 +1,19 @@
-export interface User {
 // server/domain/repositories/IUserRepository.ts
 
 import type { User } from "@shared/schema";
 
-// Define the extended user type with department
 export interface Department {
   id: number;
   name: string;
 }
 
 export interface UserWithDepartment extends User {
-  department: Department | null; // null if no department assigned
+  department: Department | null;
 }
 
-// Main repository interface
 export interface IUserRepository {
   findById(id: number): Promise<User | undefined>;
-  findByIdWithDepartment(id: number): Promise<UserWithDepartment | undefined>; // 👈 ADD THIS
+  findByIdWithDepartment(id: number): Promise<UserWithDepartment | undefined>;
   findAll(): Promise<User[]>;
   create(user: any): Promise<User>;
   update(id: number, updates: Partial<User>): Promise<User | undefined>;
