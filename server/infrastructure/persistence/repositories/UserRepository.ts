@@ -1,4 +1,4 @@
-// server/infrastructure/persistence/UserRepository.ts
+// server/infrastructure/persistence/repositories/UserRepository.ts
 
 import { eq, sql } from "drizzle-orm";
 import {
@@ -7,7 +7,7 @@ import {
   type User,
   type InsertUser,
 } from "@shared/schema";
-import type { IUserRepository, UserWithDepartment } from "../domain/repositories/IUserRepository";
+import type { IUserRepository, UserWithDepartment } from "../../../domain/repositories/IUserRepository";
 
 export class UserRepository implements IUserRepository {
   constructor(private db: any) {}
