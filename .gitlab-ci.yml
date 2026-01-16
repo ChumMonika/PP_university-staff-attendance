@@ -1,0 +1,56 @@
+stages:
+  - test
+  - build
+
+# Use Node.js Docker image
+image: node:18
+
+# Cache node_modules for faster builds
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - node_modules/
+    - client/node_modules/
+
+# Install dependencies before running jobs
+before_script:
+  - npm ci
+
+# Type checking job
+type-check:
+  stage: test
+  script:
+    - npm run check
+  only:
+    - main
+    - merge_requests
+
+# Optional: Add linting
+# lint:
+#   stage: test
+#   script:
+#     - npm run lint
+#   only:
+#     - main
+#     - merge_requests
+
+# Optional: Add tests
+# test:
+#   stage: test
+#   script:
+#     - npm test
+#   only:
+#     - main
+#     - merge_requests
+
+# Build job
+build:
+  stage: build
+  script:
+    - npm run build
+  artifacts:
+    paths:
+      - dist/
+    expire_in: 1 week
+  only:
+    - main
