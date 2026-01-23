@@ -43,6 +43,13 @@ jobs:
           echo "DB_USER=root" >> $GITHUB_ENV
           echo "DB_PASSWORD=root" >> $GITHUB_ENV
           echo "DB_NAME=attendance_test" >> $GITHUB_ENV
+          
+      - name: Install MySQL client
+        run: sudo apt-get update && sudo apt-get install -y mysql-client
+      
+      - name: Initialize database schema
+        run: |
+          mysql -h 127.0.0.1 -u root -proot university_staff_tracker < server/database/final_schema.sql
 
       - name: Run backend tests
         run: npm test
