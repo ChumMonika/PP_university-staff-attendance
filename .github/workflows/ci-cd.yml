@@ -54,11 +54,13 @@ jobs:
 
       - name: Initialize database schema
         run: |
-          mysql -h127.0.0.1 -uroot -ptestpass university_staff_tracker_test < database/final_schema.sql
+          # Read the schema file and replace database name
+          sed 's/university_staff_tracker/university_staff_tracker_test/g' database/final_schema.sql | mysql -h127.0.0.1 -uroot -ptestpass
 
       - name: Seed database
         run: |
-          mysql -h127.0.0.1 -uroot -ptestpass university_staff_tracker_test < database/seed_data.sql
+          # Read the seed file and replace database name
+          sed 's/university_staff_tracker/university_staff_tracker_test/g' database/seed_data.sql | mysql -h127.0.0.1 -uroot -ptestpass university_staff_tracker_test
 
       - name: Type check
         run: npm run check
