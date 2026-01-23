@@ -48,8 +48,8 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y mysql-client
       
       - name: Initialize database schema
+        # We run this from the root to ensure ../database/final_schema.sql is reachable
         run: |
-          # The service creates the DB, but this command creates the tables
           mysql -h 127.0.0.1 -u root -proot university_staff_tracker < database/final_schema.sql
 
       - name: Run backend tests
@@ -60,3 +60,4 @@ jobs:
           DB_USER: root
           DB_PASSWORD: root
           DB_NAME: university_staff_tracker
+          NODE_ENV: test
