@@ -40,22 +40,27 @@ jobs:
       - name: Install MySQL client
         run: sudo apt-get update && sudo apt-get install -y mysql-client
       
-      - name: Initialize and Verify Database
+      - name: Initialize and Debug Database
         run: |
-          echo "Checking if schema file exists..."
-          ls -R database/ || ls -R server/database/
+          echo "1. Checking directory structure..."
+          ls -R
           
-          echo "Importing schema..."
-          mysql -h 127.0.0.1 -u root -proot university_staff_tracker < database/final_schema.sql
+          echo "2. Importing schema (Forcing database: university_staff_tracker)..."
+          # The --one-database flag ignores 'USE' statements inside the SQL file
+          mysql -h 127.0.0.1 -u root -proot --one-database university_staff_tracker < database/final_schema.sql
           
-          echo "Verifying tables in university_staff_tracker:"
+          echo "3. Verifying if tables were actually created..."
           mysql -h 127.0.0.1 -u root -proot -e "SHOW TABLES;" university_staff_tracker
+          
+          echo "4. Checking for any other databases created by mistake..."
+          mysql -h 127.0.0.1 -u root -proot -e "SHOW DATABASES;"
 
       - name: Run backend tests
         run: npm test
         working-directory: server
         env:
           DB_HOST: 127.0.0.1
+          DB_PORT: 3306
           DB_USER: root
           DB_PASSWORD: root
           DB_NAME: university_staff_tracker
