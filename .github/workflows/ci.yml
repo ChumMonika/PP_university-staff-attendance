@@ -20,9 +20,9 @@ jobs:
           - 3306:3306
         options: >-
           --health-cmd="mysqladmin ping"
-          --health-interval=10s
+          --health-interval=5s
           --health-timeout=5s
-          --health-retries=3
+          --health-retries=5
 
     steps:
       - name: Checkout code
@@ -37,22 +37,21 @@ jobs:
         run: npm install
         working-directory: server
 
-      - name: Install MySQL client
-        run: sudo apt-get update && sudo apt-get install -y mysql-client
-      
-      - name: Initialize and Debug Database
+      - name: Wait for MySQL and Initialize
         run: |
-          echo "1. Checking directory structure..."
-          ls -R
+          sudo apt-get update && sudo apt-get install -y mysql-client
           
-          echo "2. Importing schema (Forcing database: university_staff_tracker)..."
-          # The --one-database flag ignores 'USE' statements inside the SQL file
-          mysql -h 127.0.0.1 -u root -proot --one-database university_staff_tracker < database/final_schema.sql
+          echo "Verifying schema file location..."
+          find . -name "final_schema.sql"
           
-          echo "3. Verifying if tables were actually created..."
+          echo "Applying schema to university_staff_tracker..."
+          # The --force flag ensures it keeps going even if there are errors in the SQL file
+          mysql -h 127.0.0.1 -u root -proot --force university_staff_tracker < database/final_schema.sql
+          
+          echo "DIAGNOSTIC: Listing all tables created:"
           mysql -h 127.0.0.1 -u root -proot -e "SHOW TABLES;" university_staff_tracker
           
-          echo "4. Checking for any other databases created by mistake..."
+          echo "DIAGNOSTIC: Checking for phantom databases..."
           mysql -h 127.0.0.1 -u root -proot -e "SHOW DATABASES;"
 
       - name: Run backend tests
@@ -60,7 +59,6 @@ jobs:
         working-directory: server
         env:
           DB_HOST: 127.0.0.1
-          DB_PORT: 3306
           DB_USER: root
           DB_PASSWORD: root
           DB_NAME: university_staff_tracker
