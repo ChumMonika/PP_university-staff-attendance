@@ -10,6 +10,20 @@ jobs:
   test-and-build:
     runs-on: ubuntu-latest
 
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: attendance_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -19,21 +33,17 @@ jobs:
         with:
           node-version: 18
 
-      - name: Install root dependencies
-        run: npm install
-
       - name: Install backend dependencies
         run: npm install
         working-directory: server
 
-      - name: Install frontend dependencies
-        run: npm install
-        working-directory: client
+      - name: Set DB env variables
+        run: |
+          echo "DB_HOST=127.0.0.1" >> $GITHUB_ENV
+          echo "DB_USER=root" >> $GITHUB_ENV
+          echo "DB_PASSWORD=root" >> $GITHUB_ENV
+          echo "DB_NAME=attendance_test" >> $GITHUB_ENV
 
       - name: Run backend tests
         run: npm test
         working-directory: server
-
-      - name: Build frontend
-        run: npm run build
-        working-directory: client
