@@ -1,20 +1,43 @@
-# Use Node.js 18 Alpine (lightweight)
-FROM node:18-alpine
+# ===============================
+# Builder stage
+# ===============================
+FROM node:20 AS builder
 
-# Set working directory
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install all dependencies (including dev)
+RUN npm ci
+
+# Copy source code
+COPY . .
+
+# Build frontend
+RUN npm run build:client
+
+# Build backend
+RUN npm run build:server
+
+# ===============================
+# Production stage
+# ===============================
+FROM node:20
+
 WORKDIR /app
 
 # Copy package files
 COPY package*.json ./
 
 # Install production dependencies only
-RUN npm ci --only=production
+RUN npm ci --omit=dev
 
-# Copy built application code
-COPY dist/ ./dist/
+# Copy built output
+COPY --from=builder /app/dist ./dist
 
-# Expose port (adjust if your app uses a different port)
+# Expose backend port
 EXPOSE 5000
 
-# Run the app
+# Start server
 CMD ["node", "dist/index.js"]

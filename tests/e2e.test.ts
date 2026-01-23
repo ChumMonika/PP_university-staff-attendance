@@ -9,10 +9,10 @@ import bcrypt from 'bcrypt';
 
 // Database connection configuration
 const dbConfig = {
-  host: 'localhost',
-  user: 'root',
+  host: process.env.DB_HOST || 'localhost',
+  user: process.env.DB_USER || 'root',
   password: '', // Will be set from env
-  database: 'university_staff_tracker',
+  database: process.env.DB_NAME || 'university_staff_tracker',
 };
 
 let connection: mysql.Connection | null = null;

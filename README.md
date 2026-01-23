@@ -1,137 +1,120 @@
-# **This repository contains both source code and 3 required project documents for submission.**
+# University Staff Attendance System
 
-# University Staff Attendance Management System
+Web-based attendance and leave management for university teachers and staff.
 
-A web-based attendance and leave management system for university teachers and staff, built with modern technologies and clean architecture principles.
+**Tech Stack:** React + Node.js + MySQL + Docker
 
----
+This project is built using Clean Architecture and supports:
+* Role-based access control (Admin, Head, HR, Teacher, Staff, Moderator)
+* Attendance tracking
+* Leave request workflow
+* Class & schedule management
+* Analytics dashboard
+The system supports local deployment using Docker to ensure it runs the same on every machine.
 
-## 📄 Project Documentation
+## 🚀 Quick Start
 
-All **must-submit** project 3 report documents are located in the **`Draft-ReportPPracticum/`** folder:
-
-1. **Project Practicum Draft Report** - `Draft-ReportPPracticum/1. Attendace_University_Staff_Report_Final.pdf`
-2. **Functional Requirements** - `Draft-ReportPPracticum/2. IC-Functional-Requirements.pdf`
-3. **Non-Functional Requirements** - `Draft-ReportPPracticum/3. Non-FunctionalRequirements.pdf`
-
----
-
-## ⚙️ System Requirements
-
-- **Node.js** v20 or higher
-- **MySQL** 8.0 or higher
-- **npm** (comes with Node.js)
-
----
-
-## 🚀 Setup Instructions
-
-### Step 1: Clone the Repository
-
+### With Docker (Recommended)
 ```bash
-git clone https://github.com/ChumMonika/PP_university-staff-attendance.git
-cd PP_university-staff-attendance
+# Setup environment
+cp .env.example .env
+# Edit .env with your MySQL password and session secret
+
+# Start the app
+docker-compose up -d
+
+# Check running
+docker ps
+
+# Access at http://localhost:5000
+```
+### Useful Docker Commands (For Demo)
+```bash
+# Show running containers
+docker ps
+
+# View logs
+docker-compose logs -f
+
+# Stop system
+docker-compose down
 ```
 
-### Step 2: Install Dependencies
-
+### Manual Development (Without Docker)
 ```bash
-npm install
-```
+# Install dependencies
+npm i
 
-### Step 3: Setup Database
-Open powershell to run the cmd:
-```bash
+# Setup database
 mysql -u root -p
-```
-=> Then enter your MySQL password.
-
-You should see:
-```bash
-mysql>
-```
-
-Now you can run 2 SQL files in the project folder to set up the database and seed some data for test
-
-(inside MySQL) Now run:
-```bash
 source database/final_schema.sql;
 source database/seed_data.sql;
-```
 
-After that, you can exit MySQL by run: 
-```bash
-exit;
-```
+# Configure .env file
+cp .env.example .env
 
-This creates the database `university_staff_tracker_copy` with sample data.
-
-### Step 4: Configure Environment Variables
-Edit `.env.example .env` file to `.env` and update:
-- `MYSQL_PASSWORD` - Your MySQL root password
-- `SESSION_SECRET` - A random 32-character string 
-can generate session_secrete through: 
-```bash
-node -e "console.log(crypto.randomBytes(32).toString('hex'))"
-```
-
-### Step 5: Run the Application
-
-```bash
+# Start development server
 npm run dev
+
 ```
 
-Access the application:
-- **Frontend**: http://localhost:5173
-- **Backend API**: http://localhost:5000
+## 🔑 Test Accounts
 
----
+Login with password `password123`:
 
-## 🔑 Test Login Accounts
+| Username | Role |
+|----------|------|
+| ADMIN001 | Admin |
+| HEAD001 | Department Head |
+| HR002 | HR Assistant |
+| CM001 | Class Moderator |
+| T001 | Teacher |
 
-go to create class moderator and hr fro attedacne marking and test these accounts to test the system (password: `password123`):
-
-| Username | Role | Description |
-|----------|------|-------------|
-| ADMIN001 | Admin | System configuration and user management |
-| HEAD001 | Department Head | Approve leave, view department reports |
-| HR002 | HR Assistant | Mark staff attendance |
-| CM001 | Class Moderator | Mark teacher attendance |
-| T001 | Teacher | Submit leave, view schedule |
-| S001 | Staff | Submit leave, view attendance |
-
----
-
-## 🛠️ Available Commands
+## 📦 Build & Deploy
 
 ```bash
-npm run dev      # Start development server
-npm run build    # Build for production
-npm test         # Run test suite (72 tests)
-npm run check    # TypeScript type checking
+# Build dev
+docker build --build-arg NODE_ENV=development -t myapp:dev .
+
+# Build staging  
+docker build --build-arg NODE_ENV=staging -t myapp:staging .
+
+# Build production
+docker build --build-arg NODE_ENV=production -t myapp:production .
+
+# Tag production as v1.0.0
+docker tag myapp:production myapp:v1.0.0
+
+# Verify tags
+docker images | findstr myapp
+
+# Or use npm build for manual deployment
+npm run build
+npm start
 ```
+
+## 🧠 DevOps Concepts (Simple Explanation)
+* Docker: Packages the app so it runs the same everywhere
+* Dockerfile: Instructions to build the image
+* Image: Built application package
+* Container: Running app from image
+* Tag: Version label (dev, staging, production)
+* CI/CD: GitHub automatically builds the project when you push code
+* Docker Hub: Online place to store Docker images (optional)
+
+
+## 🏆 Features
+
+✅ Role-based access control  
+✅ Digital attendance tracking  
+✅ Leave request management  
+✅ Schedule management  
+✅ Analytics dashboard  
+✅ Clean architecture
 
 ---
 
-## 📂 Project Structure
-
-```
-client/              # React frontend (Vite + TypeScript)
-server/              # Node.js backend (Express + Clean Architecture)
-  ├── core/          # Business logic and use cases
-  ├── infrastructure/# Database repositories
-  └── presentation/  # API controllers and routes
-database/            # MySQL schema and seed data
-shared/              # Shared types and schemas
-```
-
----
-
-## ✨ Key Features
-
-- **Role-Based Access Control** - 6 different user roles
-- **Digital Attendance Tracking** - For teachers and staff
-- **Leave Management** - Submit and approve leave requests
-- **Schedule Management** - Semester-based class schedules
-- **Department Analytics** - Reports and statistics
-- **Clean Architecture** - Separation of concerns, testable code
+**✅ Project Status: 100% Complete**
+* Local deployment with Docker
+* CI/CD with GitHub Actions
+* Production build ready

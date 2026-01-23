@@ -1,0 +1,14 @@
+node_modules
+npm-debug.log
+.env
+.env.local
+.git
+.gitignore
+.vscode
+dist
+*.md
+.gitlab-ci.yml
+Draft-ReportPPracticum
+tests
+*.test.ts
+vitest.config.ts
