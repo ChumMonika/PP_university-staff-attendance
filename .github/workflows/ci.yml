@@ -40,12 +40,19 @@ jobs:
         run: |
           sudo apt-get update && sudo apt-get install -y mysql-client
           
-          echo "Importing schema from final_schema.sql..."
-          # We don't specify a DB name here because the SQL file handles creation/USE
-          mysql -h 127.0.0.1 -u root -proot < database/final_schema.sql
+          echo "1. Creating both database names to be safe..."
+          mysql -h 127.0.0.1 -u root -proot -e "CREATE DATABASE IF NOT EXISTS university_staff_tracker; CREATE DATABASE IF NOT EXISTS university_staff_tracker_copy;"
           
-          echo "Verifying tables in university_staff_tracker_copy:"
-          mysql -h 127.0.0.1 -u root -proot -e "SHOW TABLES;" university_staff_tracker_copy
+          echo "2. Importing schema into university_staff_tracker..."
+          # Force the schema into the original name
+          mysql -h 127.0.0.1 -u root -proot --one-database university_staff_tracker < database/final_schema.sql
+          
+          echo "3. Importing schema into university_staff_tracker_copy..."
+          # Also import into the 'copy' name as requested by your SQL file
+          mysql -h 127.0.0.1 -u root -proot --one-database university_staff_tracker_copy < database/final_schema.sql
+          
+          echo "DIAGNOSTIC: Tables in university_staff_tracker:"
+          mysql -h 127.0.0.1 -u root -proot -e "SHOW TABLES;" university_staff_tracker
 
       - name: Run backend tests
         run: npm test
@@ -54,6 +61,5 @@ jobs:
           DB_HOST: 127.0.0.1
           DB_USER: root
           DB_PASSWORD: root
-          # This MUST match the name inside your USE statement in the SQL file
-          DB_NAME: university_staff_tracker_copy
+          DB_NAME: university_staff_tracker
           NODE_ENV: test
