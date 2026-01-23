@@ -3,7 +3,7 @@
 -- Portable & FK-safe
 -- ============================================
 
-USE university_staff_tracker_copy;
+USE university_staff_tracker;
 
 -- ============================================
 -- 1. DEPARTMENTS

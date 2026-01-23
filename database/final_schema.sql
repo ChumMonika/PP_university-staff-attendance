@@ -4,12 +4,12 @@
 -- Portable & Fresh Install Safe
 -- ===============================
 
-DROP DATABASE IF EXISTS university_staff_tracker_copy;
-CREATE DATABASE university_staff_tracker_copy
+DROP DATABASE IF EXISTS university_staff_tracker;
+CREATE DATABASE university_staff_tracker
   CHARACTER SET utf8mb4
   COLLATE utf8mb4_unicode_ci;
 
-USE university_staff_tracker_copy;
+USE university_staff_tracker;
 
 -- ===============================
 -- departments
