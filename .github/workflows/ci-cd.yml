@@ -41,6 +41,25 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Wait for MySQL
+        run: |
+          for i in {1..30}; do
+            if mysqladmin ping -h127.0.0.1 -uroot -ptestpass 2>/dev/null; then
+              echo "MySQL is ready"
+              break
+            fi
+            echo "Waiting for MySQL... ($i/30)"
+            sleep 1
+          done
+
+      - name: Initialize database schema
+        run: |
+          mysql -h127.0.0.1 -uroot -ptestpass university_staff_tracker_test < database/final_schema.sql
+
+      - name: Seed database
+        run: |
+          mysql -h127.0.0.1 -uroot -ptestpass university_staff_tracker_test < database/seed_data.sql
+
       - name: Type check
         run: npm run check
 
