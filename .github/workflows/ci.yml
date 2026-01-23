@@ -15,10 +15,11 @@ jobs:
         image: mysql:8.0
         env:
           MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: university_staff_tracker  # Pre-create the correct DB
         ports:
           - 3306:3306
         options: >-
-          --health-cmd="mysqladmin ping"
+          --health-cmd="mysqladmin ping -h localhost -u root -proot"
           --health-interval=5s
           --health-timeout=5s
           --health-retries=10
@@ -36,20 +37,15 @@ jobs:
         run: npm install
         working-directory: server
 
-      - name: Initialize Databases
+      - name: Install MySQL client
+        run: sudo apt-get update && sudo apt-get install -y mysql-client
+
+      - name: Initialize database schema
         run: |
-          sudo apt-get update && sudo apt-get install -y mysql-client
+          echo "Importing schema into university_staff_tracker..."
+          mysql -h 127.0.0.1 -u root -proot university_staff_tracker < database/final_schema.sql
           
-          echo "1. Pre-creating both database names..."
-          mysql -h 127.0.0.1 -u root -proot -e "CREATE DATABASE IF NOT EXISTS university_staff_tracker; CREATE DATABASE IF NOT EXISTS university_staff_tracker_copy;"
-          
-          echo "2. Importing schema into university_staff_tracker (Ignoring internal USE commands)..."
-          mysql -h 127.0.0.1 -u root -proot --one-database university_staff_tracker < database/final_schema.sql
-          
-          echo "3. Importing schema into university_staff_tracker_copy..."
-          mysql -h 127.0.0.1 -u root -proot --one-database university_staff_tracker_copy < database/final_schema.sql
-          
-          echo "DIAGNOSTIC: Verifying tables in target DB..."
+          echo "Verifying tables were created..."
           mysql -h 127.0.0.1 -u root -proot -e "SHOW TABLES;" university_staff_tracker
 
       - name: Run backend tests
