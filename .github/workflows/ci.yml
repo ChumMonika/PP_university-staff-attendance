@@ -49,7 +49,7 @@ jobs:
       
       - name: Initialize database schema
         run: |
-          mysql -h 127.0.0.1 -u root -proot university_staff_tracker < server/database/final_schema.sql
+          mysql -h 127.0.0.1 -u root -proot university_staff_tracker < database/final_schema.sql
 
       - name: Run backend tests
         run: npm test
