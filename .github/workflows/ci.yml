@@ -36,22 +36,20 @@ jobs:
         run: npm install
         working-directory: server
 
-      - name: Initialize Database
+      - name: Initialize Databases
         run: |
           sudo apt-get update && sudo apt-get install -y mysql-client
           
-          echo "1. Creating both database names to be safe..."
+          echo "1. Pre-creating both database names..."
           mysql -h 127.0.0.1 -u root -proot -e "CREATE DATABASE IF NOT EXISTS university_staff_tracker; CREATE DATABASE IF NOT EXISTS university_staff_tracker_copy;"
           
-          echo "2. Importing schema into university_staff_tracker..."
-          # Force the schema into the original name
+          echo "2. Importing schema into university_staff_tracker (Ignoring internal USE commands)..."
           mysql -h 127.0.0.1 -u root -proot --one-database university_staff_tracker < database/final_schema.sql
           
           echo "3. Importing schema into university_staff_tracker_copy..."
-          # Also import into the 'copy' name as requested by your SQL file
           mysql -h 127.0.0.1 -u root -proot --one-database university_staff_tracker_copy < database/final_schema.sql
           
-          echo "DIAGNOSTIC: Tables in university_staff_tracker:"
+          echo "DIAGNOSTIC: Verifying tables in target DB..."
           mysql -h 127.0.0.1 -u root -proot -e "SHOW TABLES;" university_staff_tracker
 
       - name: Run backend tests
