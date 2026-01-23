@@ -71,7 +71,7 @@ CREATE TABLE users (
   id INT AUTO_INCREMENT PRIMARY KEY,
   unique_id VARCHAR(20) NOT NULL UNIQUE,
   name VARCHAR(255) NOT NULL,
-  email VARCHAR(255),
+  email VARCHAR(255) UNIQUE,
   password VARCHAR(255) NOT NULL,
   role ENUM(
     'head','admin','hr_assistant','hr_backup',
