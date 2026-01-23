@@ -33,10 +33,10 @@ import {
   UserRepository,
   AttendanceRepository,
   DepartmentRepository,
-  type IUserRepository,
   type IAttendanceRepository,
   type IDepartmentRepository
 } from "./repositories";
+import type { IUserRepository } from "./repositories/interfaces";
 
 /* =======================
    Re-export types & interface
